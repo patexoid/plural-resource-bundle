@@ -15,16 +15,18 @@ dependencies {
     api("org.slf4j:jcl-over-slf4j:1.7.25")
     testImplementation("junit:junit:4.13.2")
 }
-val versionDetails: groovy.lang.Closure<com.palantir.gradle.gitversion.VersionDetails> by extra
+val versionDetails = extra["versionDetails"] as groovy.lang.Closure<com.palantir.gradle.gitversion.VersionDetails>
 val details = versionDetails()
 group = "com.patex"
 version =
     if (details.commitDistance == 0) details.lastTag else (details.lastTag + "-" + details.commitDistance + "-" + details.gitHash)
 description = "plural-resource-bundle"
-java.sourceCompatibility = JavaVersion.VERSION_1_8
 
 println(version)
 java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(25))
+    }
     withSourcesJar()
     withJavadocJar()
 }
@@ -48,6 +50,10 @@ if(details.commitDistance==0) {
 }
 tasks.withType<JavaCompile>() {
     options.encoding = "UTF-8"
+    // Emit bytecode/API restricted to Java 17 (two LTS releases back from
+    // the build toolchain, 25: 25 -> 21 -> 17) so the published jar stays
+    // usable on older LTS runtimes, not just the one it was built with.
+    options.release.set(17)
 }
 
 tasks.withType<Javadoc>() {
