@@ -13,7 +13,7 @@ repositories {
 
 dependencies {
     api("org.slf4j:jcl-over-slf4j:1.7.25")
-    testImplementation("junit:junit:4.12")
+    testImplementation("junit:junit:4.13.2")
 }
 val versionDetails: groovy.lang.Closure<com.palantir.gradle.gitversion.VersionDetails> by extra
 val details = versionDetails()

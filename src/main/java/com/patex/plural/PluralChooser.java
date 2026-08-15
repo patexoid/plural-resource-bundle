@@ -18,13 +18,20 @@ class PluralChooser {
         this.locale = locale;
     }
 
+    Locale getLocale() {
+        return locale;
+    }
+
     public void putWord(String... wordForms) {
         wordForms = Arrays.stream(wordForms).map(s -> s.toLowerCase(locale)).toArray(String[]::new);
         allWords.put(wordForms[0], wordForms);
     }
 
     public String getForm(String word, int count) {
-        String[] words = allWords.get(word.toLowerCase());
+        String[] words = allWords.get(word);
+        if (words == null) {
+            words = allWords.get(word.toLowerCase(locale));
+        }
         if (words != null) {
             String result = words[formNumber.apply(count)];
             if (Character.isUpperCase(word.charAt(0))) {
